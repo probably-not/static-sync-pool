@@ -134,6 +134,8 @@ func (p *Pool[T]) Reset() {
 	p.closed.Store(true)
 	// Unpin everything
 	p.pinner.Unpin()
+	// Force the config to be lazy after Reset completes.
+	p.config.lazy = true
 	// Initialize the pool from scratch
 	p.init()
 	// Set closed back to false to open the pool back up
