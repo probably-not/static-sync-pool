@@ -6,6 +6,8 @@ import (
 	"sync/atomic"
 )
 
+// Pool is a wrapper around Go's `sync.Pool` which allows configuring a static number of
+// items that are not automatically Garbage Collected.
 type Pool[T any] struct {
 	resetMu      *sync.Mutex
 	config       *config
