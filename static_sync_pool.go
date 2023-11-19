@@ -10,11 +10,11 @@ type Pool[T any] struct {
 	resetMu      *sync.Mutex
 	config       *config
 	pinner       *runtime.Pinner
-	lazySize     atomic.Int64
-	closed       atomic.Bool
 	newFunc      func() T
 	resetFunc    func(T)
 	internalPool *sync.Pool
+	lazySize     atomic.Int64
+	closed       atomic.Bool
 }
 
 // New will initialize a new Pool with the given `newFunc` for initializing new values,
