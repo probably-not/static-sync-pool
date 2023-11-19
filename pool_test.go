@@ -13,7 +13,13 @@ type Example struct {
 	C float64
 }
 
-func TestPool(t *testing.T) {
+func TestPoolALotToSeeIfAnythingHappens(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		testPool(t, i)
+	}
+}
+
+func testPool(t *testing.T, iteration int) {
 	const staticSize = 100
 	pool := New[Example](
 		func() *Example {
@@ -33,7 +39,7 @@ func TestPool(t *testing.T) {
 		fromPool := pool.Get()
 		diff := cmp.Diff(fromPool, &Example{})
 		if diff != "" {
-			t.Errorf("expected fromPool to be empty during initial loop; iteration %d; diff from empty=\n%s", i, diff)
+			t.Errorf("test iteration %d; expected fromPool to be empty during initial loop; iteration %d; diff from empty=\n%s", iteration, i, diff)
 			return
 		}
 		items = append(items, fromPool)
@@ -50,7 +56,7 @@ func TestPool(t *testing.T) {
 			A: "I've been reset",
 		})
 		if diff != "" {
-			t.Errorf("expected fromPool to have been reset on second loop; iteration %d; diff from expected=\n%s", i, diff)
+			t.Errorf("test iteration %d; expected fromPool to have been reset on second loop; iteration %d; diff from expected=\n%s", iteration, i, diff)
 			return
 		}
 	}
@@ -58,7 +64,7 @@ func TestPool(t *testing.T) {
 	fromPool := pool.Get()
 	diff := cmp.Diff(fromPool, &Example{})
 	if diff != "" {
-		t.Errorf("expected fromPool to be empty after all static values are extracted from pool in secondary loop; diff from empty=\n%s", diff)
+		t.Errorf("test iteration %d; expected fromPool to be empty after all static values are extracted from pool in secondary loop; diff from empty=\n%s", iteration, diff)
 		return
 	}
 	pool.Put(fromPool)
@@ -72,7 +78,7 @@ func TestPool(t *testing.T) {
 	fromPool = pool.Get()
 	diff = cmp.Diff(fromPool, &Example{})
 	if diff != "" {
-		t.Errorf("expected fromPool to be empty after Reset() and GC run; diff from empty=\n%s", diff)
+		t.Errorf("test iteration %d; expected fromPool to be empty after Reset() and GC run; diff from empty=\n%s", iteration, diff)
 		return
 	}
 
@@ -82,7 +88,7 @@ func TestPool(t *testing.T) {
 		fromPool := pool.Get()
 		diff := cmp.Diff(fromPool, &Example{})
 		if diff != "" {
-			t.Errorf("expected fromPool to be empty during initial loop on lazy iteration; iteration %d; diff from empty=\n%s", i, diff)
+			t.Errorf("test iteration %d; expected fromPool to be empty during initial loop on lazy iteration; iteration %d; diff from empty=\n%s", iteration, i, diff)
 			return
 		}
 		items = append(items, fromPool)
@@ -99,8 +105,10 @@ func TestPool(t *testing.T) {
 			A: "I've been reset",
 		})
 		if diff != "" {
-			t.Errorf("expected fromPool to have been reset on second loop on lazy iteration; iteration %d; diff from expected=\n%s", i, diff)
+			t.Errorf("test iteration %d; expected fromPool to have been reset on second loop on lazy iteration; iteration %d; diff from expected=\n%s", iteration, i, diff)
 			return
 		}
 	}
+
+	pool.Reset()
 }
