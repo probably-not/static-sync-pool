@@ -85,7 +85,7 @@ jobs:
           go-version: "1.21"
       - name: Install Dependencies
         run: go mod download
-      - name: Go Test
-        # TODO: Return this later...
-        # run: go test -short -race -shuffle=on $(go list ./...)
+      - name: Go Test (Race Disabled)
         run: go test -short -shuffle=on $(go list ./...)
+      - name: Go Test (Race Enabled)
+        run: go test -short -race -shuffle=on $(go list ./...)
